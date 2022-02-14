@@ -2,12 +2,13 @@ clc
 clear
 close all
 %import kml file
-blub = kml2struct('george.kml');
+blub = kml2struct('landvector.kml');
 
 %select first year vector to do skeletonzation for base centerline
 lon = blub(1).Lon(1:end-1); lat = blub(1).Lat(1:end-1);
 %convert to x and y (utm coordinates, wgs84), units are meters
 [x,y] = ll2utm(lat,lon);
+
 %make a skeleton
 [v, e] = voronoiSkel([x/1e6 y/1e6]','boundary','fast',3); v = v.*1e6;
 %plot land vector
@@ -96,6 +97,7 @@ CW = CW(:,m);
 CW_beach = CW_beach(:,m);
 CW_back = CW_back(:,m);
 CW_back_cummax = cummax(CW_back,2);
+CW_beach_cummin = cummin(CW_beach,2);
 
 %plot width
 figure(3);
@@ -118,7 +120,7 @@ CW_first26years = CW(:,1:(end-1));
 %interpolate overwash and width 
 figure(7)
 
-for i=m
+for i=m(1:end-1)
 txt = ['Year ',num2str(1984+i)];
 scatter(CW_first26years(:,i),CW_back_change(:,i),'filled','black','DisplayName',txt)
 
